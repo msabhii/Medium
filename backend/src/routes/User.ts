@@ -10,7 +10,7 @@ const routerUser = new Hono<{
   };
 }>();
 
-routerUser.use("/api/v1/blog/*", async (c, next) => {
+routerUser.use("/api/v1/user/*", async (c, next) => {
   try {
     const header = c.req.header("authorization");
 
@@ -39,34 +39,32 @@ routerUser.post("/api/v1/user/signup", async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
-  const body = await c.req.json();
-  console.log(body);
 
-  const userExist = prisma.user.findUnique({
-    where: {
+  const body = await c.req.json();
+  // const userExist = prisma.user.findUnique({
+  //   where: {
+  //     email: body.email,
+  //   },
+  // });
+  //if (!userExist) {
+  const user = await prisma.user.create({
+    data: {
       email: body.email,
+      password: body.password,
     },
   });
-  if (!userExist) {
-    const user = await prisma.user.create({
-      data: {
-        email: body.email,
-        password: body.password,
-      },
-    });
 
-    const payload = {
-      id: user.id,
-    };
-    const sercret = c.env.JWTSECRET;
-    const token = await sign(payload, sercret);
+  const payload = {
+    id: user.id,
+  };
+  const sercret = c.env.JWTSECRET;
+  const token = await sign(payload, sercret);
 
-    return c.json({
-      jwt: token,
-    });
-  }
-
-  return c.json({ eror: "User already present." });
+  return c.json({
+    jwt: token,
+  });
+  //}
+  //return c.json({ error: "User already present." });
 });
 
 routerUser.post("/api/v1/user/signin", async (c) => {

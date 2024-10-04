@@ -1,117 +1,80 @@
-import { PrismaClient } from "@prisma/client/edge";
+import { PrismaClient } from "@prisma/client/extension";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
-import { bodyLimit } from "hono/body-limit";
-import { sign, verify } from "hono/jwt";
+import { verify } from "hono/jwt";
 
-const routerBlog = new Hono<{
+export const bookRouter = new Hono<{
   Bindings: {
     DATABASE_URL: string;
-    JWTSECRET: string;
+    JWT_SECRET: string;
+  };
+  Variables: {
+    userId: string;
   };
 }>();
 
-routerBlog.use("/api/v1/blog/*", async (c, next) => {
-  try {
-    const header = c.req.header("authorization");
-
-    if (!header) {
-      return c.json({ error: "Some thing went worng with headers" });
-    }
-    const token = header.split(" ")[1];
-    console.log(token, "This is the token");
-
-    const secret = c.env.JWTSECRET;
-    if (!secret) {
-      return c.json({ error: "Token is invalid" });
-    }
-
-    const response = await verify(token, secret);
-    if (response.id) {
-      next();
-    } else {
-      c.status(403);
-      return c.json({ error: "Unauthorized" });
-    }
-  } catch (error) {
-    console.log(error);
+bookRouter.use(async (c, next) => {
+  const jwt = c.req.header("Authorization");
+  if (!jwt) {
+    c.status(401);
+    return c.json({ error: "unauthorized" });
   }
+  const token = jwt.split(" ")[1];
+  const payload = await verify(token, c.env.JWT_SECRET);
+  if (!payload) {
+    c.status(401);
+    return c.json({ error: "unauthorized" });
+  }
+  c.set("userId", payload.id);
+  await next();
 });
 
-routerBlog.post("/api/v1/blog", async (c) => {
+bookRouter.post("/", async (c) => {
+  const userId = c.get("userId");
   const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
+    datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
-  const body = await c.req.json();
 
+  const body = await c.req.json();
   const post = await prisma.post.create({
     data: {
       title: body.title,
       content: body.content,
-      published: false,
-      author: {
-        connect: { id: body.id },
-      },
+      authorId: userId,
     },
   });
-  return c.json({
-    id: post.id,
-  });
+  return c.json({ id: post.id });
 });
 
-routerBlog.put("/api/v1/blog", async (c) => {
-  const jwtPayload = c.get("jwtPayload");
-  if (!jwtPayload || typeof jwtPayload !== "object") {
-    return c.json({ msg: "Unauthorized" }, 401);
-  }
-  const userid = jwtPayload.id as string;
-
+bookRouter.put("/", async (c) => {
+  const userId = c.get("userId");
+  const body = await c.req.json();
   const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
+    datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  const body = await c.req.json();
-  try {
-    await prisma.post.update({
-      where: {
-        id: body.id,
-        authorID: userid,
-      },
-      data: {
-        title: body.title,
-        content: body.content,
-      },
-    });
-    return c.json({
-      msg: "Post Updated",
-    });
-  } catch (error) {
-    return c.json({ msg: error });
-  }
+  await prisma.Post.update({
+    where: {
+      id: body.id,
+      authorId: userId,
+    },
+    data: {
+      title: body.title,
+      content: body.content,
+    },
+  });
+  return c.text("Updated Post");
 });
 
-routerBlog.get("/api/v1/blog/:id", async (c) => {
+bookRouter.get("/:id", async (c) => {
   const id = c.req.param("id");
   const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
+    datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
-
-  const body = await c.req.json();
-
-  await prisma.post.findUnique({
+  const post = await prisma.Post.findUnique({
     where: {
       id,
     },
   });
-});
-
-routerBlog.get("/api/v1/blog/bulk", async (c) => {
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
-  }).$extends(withAccelerate());
-
-  const post = await prisma.post.findMany({});
   return c.json(post);
 });
-
-export default routerBlog;
