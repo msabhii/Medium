@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { sign, verify } from "hono/jwt";
+import { signUpInput } from "../zod";
 
 const routerUser = new Hono<{
   Bindings: {
@@ -34,19 +35,19 @@ routerUser.use("/api/v1/user/*", async (c, next) => {
     console.log(error);
   }
 });
-
-routerUser.post("/api/v1/user/signup", async (c) => {
+ 
+routerUser.post("/signup", async (c) => {
+  const body = await c.req.json();
+  const { success } = signUpInput.safeParse(body);
+  if (!success) {
+    c.status(411);
+    return c.json({
+      msg: "Wrong Inputs",
+    });
+  }
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
-
-  const body = await c.req.json();
-  // const userExist = prisma.user.findUnique({
-  //   where: {
-  //     email: body.email,
-  //   },
-  // });
-  //if (!userExist) {
   const user = await prisma.user.create({
     data: {
       email: body.email,
@@ -67,7 +68,7 @@ routerUser.post("/api/v1/user/signup", async (c) => {
   //return c.json({ error: "User already present." });
 });
 
-routerUser.post("/api/v1/user/signin", async (c) => {
+routerUser.post("/signin", async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -91,3 +92,5 @@ routerUser.post("/api/v1/user/signin", async (c) => {
   return c.json({ jwt });
 });
 export default routerUser;
+
+//? eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzN2M1Y2YyLTc0MDEtNDcwNS04Y2Q4LWI2NDNiMzQ3ODdmYSJ9.US768yCcMxNGstM55wTlAAdYtFBXu_L6RMsRSoFeI_w
