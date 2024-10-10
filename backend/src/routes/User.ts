@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { sign, verify } from "hono/jwt";
-import { signUpInput } from "../zod";
+import { signUpInput } from "@mscode07/mscodeblog";
 
 const routerUser = new Hono<{
   Bindings: {
@@ -35,7 +35,7 @@ routerUser.use("/api/v1/user/*", async (c, next) => {
     console.log(error);
   }
 });
- 
+
 routerUser.post("/signup", async (c) => {
   const body = await c.req.json();
   const { success } = signUpInput.safeParse(body);
@@ -50,7 +50,7 @@ routerUser.post("/signup", async (c) => {
   }).$extends(withAccelerate());
   const user = await prisma.user.create({
     data: {
-      email: body.email,
+      username: body.email,
       password: body.password,
     },
   });
