@@ -1,4 +1,6 @@
+import { LableInput } from "./LableInput";
 import { Quote } from "./Quote";
-import { SignupComponent } from "./SignupComponent";
+import { AuthComponent } from "./AuthComponent";
+import { ButtonComponent } from "./ButtonComponent";
 
-export { Quote, SignupComponent };
+export { Quote, AuthComponent, LableInput, ButtonComponent };
