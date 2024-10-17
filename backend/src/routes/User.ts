@@ -12,6 +12,12 @@ const routerUser = new Hono<{
 }>();
 
 routerUser.use("/api/v1/user/*", async (c, next) => {
+  const path = c.req.path;
+  console.log(path);
+
+  if (path.endsWith("/signup") || path.endsWith("/signin")) {
+    return next();
+  }
   try {
     const header = c.req.header("authorization");
 
@@ -50,7 +56,7 @@ routerUser.post("/signup", async (c) => {
   }).$extends(withAccelerate());
   const user = await prisma.user.create({
     data: {
-      username: body.email,
+      username: body.username,
       password: body.password,
     },
   });
@@ -76,7 +82,7 @@ routerUser.post("/signin", async (c) => {
 
   const user = await prisma.user.findUnique({
     where: {
-      username: body.email,
+      username: body.username,
       password: body.password,
     },
   });
