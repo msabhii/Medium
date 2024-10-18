@@ -3,8 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BACKEND_URL } from "../config";
-import { ButtonComponent } from "./ButtonComponent";
-import { LableInput } from "./LableInput";
+import { ButtonComponent, LableInput } from "./index";
 
 export const AuthComponent = ({ type }: { type: "signup" | "signin" }) => {
   const navigate = useNavigate();
