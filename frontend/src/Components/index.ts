@@ -5,7 +5,8 @@ import { AuthComponent } from "./AuthComponent";
 import { ButtonComponent } from "./ButtonComponent";
 import { BlogCard } from "./BlogCard";
 import { Avatar } from "./Avatar";
-
+import { Appbar } from "./Appbar";
+//!-----------------------------------imports------------------------------------------------
 export {
   Quote,
   AuthComponent,
@@ -14,4 +15,5 @@ export {
   BlogCard,
   Avatar,
   BlogTopic,
+  Appbar,
 };

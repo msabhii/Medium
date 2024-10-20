@@ -3,7 +3,7 @@ import { BlogTopic } from "./BlogTopic";
 import { MdOutlineBookmarkAdd } from "react-icons/md";
 import { CiCircleMinus } from "react-icons/ci";
 import { IoIosMore } from "react-icons/io";
-
+//!-----------------------------------imports------------------------------------------------
 interface BlogCardProps {
   authorName: string;
   title: string;
@@ -19,10 +19,10 @@ export const BlogCard = ({
   publishedDate,
 }: BlogCardProps) => {
   return (
-    <div className="border-b border-slate-200 pb-4 mt-5">
+    <div className="border-b border-slate-200 pb-4 mt-5 w-screen max-w-screen-md">
       <div className="flex items-center m-2 gap-2">
-        <div className="">
-          <Avatar name={authorName} />
+        <div className="text-xs">
+          <Avatar name={authorName} size={4} />
         </div>
         <div className="">{authorName}</div>.
         <div className="text-gray-400">{publishedDate}</div>
