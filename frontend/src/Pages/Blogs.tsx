@@ -1,5 +1,4 @@
-import Skeleton from "react-loading-skeleton";
-import { Appbar, BlogCard } from "../Components";
+import { Appbar, BlogCard, BlogSkeleton } from "../Components";
 import { useBlogs } from "../hooks";
 
 //!-----------------------------------imports------------------------------------------------
@@ -9,7 +8,20 @@ export const Blogs = () => {
   if (loading) {
     return (
       <div>
-        <Skeleton count={5} />
+        <Appbar />
+        <div className="flex justify-center">
+          <div className="">
+            <BlogSkeleton />
+            <BlogSkeleton />
+            <BlogSkeleton />
+            <BlogSkeleton />
+            <BlogSkeleton />
+            <BlogSkeleton />
+            <BlogSkeleton />
+            <BlogSkeleton />
+            <BlogSkeleton />
+          </div>
+        </div>
       </div>
     );
   }

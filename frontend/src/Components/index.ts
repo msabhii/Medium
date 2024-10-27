@@ -6,7 +6,10 @@ import { ButtonComponent } from "./ButtonComponent";
 import { BlogCard } from "./BlogCard";
 import { Avatar } from "./Avatar";
 import { Appbar } from "./Appbar";
+import { BlogSkeleton } from "./BlogSkeleton";
+import { FullBlog } from "./FullBlog";
 //!-----------------------------------imports------------------------------------------------
+
 export {
   Quote,
   AuthComponent,
@@ -14,6 +17,8 @@ export {
   ButtonComponent,
   BlogCard,
   Avatar,
+  BlogSkeleton,
   BlogTopic,
   Appbar,
+  FullBlog,
 };

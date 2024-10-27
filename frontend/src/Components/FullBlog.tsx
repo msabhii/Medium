@@ -1,5 +1,6 @@
 // import { Blog } from "../hooks";
-import { Appbar } from "./Appbar";
+
+import { Avatar } from "./Avatar";
 
 interface BlogCardProps {
   authorName: string;
@@ -18,13 +19,29 @@ export const FullBlog = ({
 BlogCardProps) => {
   return (
     <div>
-      <Appbar />
-      <div className="grid grid-cols-12">
-        <div className="col-span-8">
+      <div className="grid grid-cols-12 px-6 mt-10 shadow-lg">
+        <div className="col-span-8 px-5 py-6">
           <div className="text-3xl font-extrabold">{title}</div>
-          <div className="">{content}</div>
+          <div className="text-slate-400 mt-4">Posted on 2nd Dec</div>
+          <div className="text-slate-600 mt-2">{content}</div>
         </div>
-        <div className="col-span-4">{authorName || "Anonymous"}</div>
+        <div className="gap-4 col-span-4 px-5 py-8">
+          <div className="text-slate-500">Author</div>
+          <div className="flex mt-4 gap-4 items-center">
+            <div className="text-center">
+              <Avatar name={authorName || "Anonymous"} />
+            </div>
+
+            <div>
+              <div className="text-xl text-slate-600">
+                {authorName || "Anonymous"}
+              </div>
+              <div className="text-xs text-slate-500">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -21,34 +21,34 @@ export const BlogCard = ({
   publishedDate,
 }: BlogCardProps) => {
   return (
-    <Link to={`/blog/${id}`}>
-      <div className="border-b border-slate-200 pb-4 mt-5 w-screen max-w-screen-md">
-        <div className="flex items-center m-2 gap-2 ">
-          <div className="text-xs cursor-pointer">
-            <Avatar name={authorName} size={4} />
-          </div>
-          <div className="cursor-pointer">{authorName}</div>.
-          <div className="text-gray-400">{publishedDate}</div>
+    <div className="border-b border-slate-200 pb-4 mt-5 w-screen max-w-screen-md">
+      <div className="flex items-center m-2 gap-2 ">
+        <div className="text-xs cursor-pointer">
+          <Avatar name={authorName} size={4} />
         </div>
-        <div className="m-3">
+        <div className="cursor-pointer">{authorName}</div>.
+        <div className="text-gray-400">{publishedDate}</div>
+      </div>
+      <div className="m-3">
+        <Link to={`/blog/${id}`}>
           <div className="font-extrabold text-3xl cursor-pointer">{title}</div>
-          <div className="font-semibold text-slate-500 mt-4">
-            {content.slice(0, 100) + " ..."}
-          </div>
-          <div className="flex mt-4 items-center gap-4">
-            <BlogTopic topic={"Business"} />
+        </Link>
+        <div className="font-semibold text-slate-500 mt-4">
+          {content.slice(0, 100) + " ..."}
+        </div>
+        <div className="flex mt-4 items-center gap-4">
+          <BlogTopic topic={"Business"} />
 
-            <div className="text-slate-400">{`${Math.ceil(
-              content.length / 100
-            )}minutes (s) read`}</div>
-            <div className="flex gap-3 ml-48 cursor-pointer">
-              <MdOutlineBookmarkAdd />
-              <CiCircleMinus />
-              <IoIosMore />
-            </div>
+          <div className="text-slate-400">{`${Math.ceil(
+            content.length / 100
+          )}minutes (s) read`}</div>
+          <div className="flex gap-3 ml-48 cursor-pointer">
+            <MdOutlineBookmarkAdd />
+            <CiCircleMinus />
+            <IoIosMore />
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
